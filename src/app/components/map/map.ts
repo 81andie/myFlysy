@@ -1,3 +1,4 @@
+
 import {
   Component,
   inject,
@@ -31,6 +32,8 @@ import Icon from 'ol/style/Icon.js';
 
 import { FlightsService } from '../../../services/flights.service';
 import { Flight } from '../../interfaces/flight.interface';
+import Overlay from 'ol/Overlay';
+
 
 @Component({
   selector: 'app-map',
@@ -49,10 +52,13 @@ export class MapComponent implements OnInit, OnDestroy {
   private refreshInterval: any;
   private animationFrame: any;
 
+
+
   constructor() {
     effect(() => {
       const flights = this.flightsService.flights();
       this.updateFlights(flights);
+
     });
   }
 
@@ -99,6 +105,8 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.startAutoRefresh();
     this.animate();
+    const flights = this.flightsService.flights();
+    this.researchFlight()
   }
 
   startAutoRefresh() {
@@ -114,7 +122,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
       const [lon, lat] = toLonLat(center);
 
-      this.flightsService.loadFlights(lat, lon, 60);
+      this.flightsService.loadFlights(lat, lon, 80);
 
     }, 2000);
   }
@@ -138,11 +146,14 @@ export class MapComponent implements OnInit, OnDestroy {
 
     for (const flight of flights) {
 
+
+
       if (!flight.latitude || !flight.longitude) continue;
 
       const coords = fromLonLat([flight.longitude, flight.latitude]);
 
       let feature = this.flightFeatures.get(flight.icao24);
+
 
       if (feature) {
 
@@ -251,8 +262,94 @@ export class MapComponent implements OnInit, OnDestroy {
     this.animationFrame = requestAnimationFrame(this.animate);
   };
 
+
+
+  researchFlight() {
+
+
+
+
+    const container = document.getElementById('popup') as HTMLElement | undefined;
+    const content = document.getElementById('popup-content') as HTMLElement | undefined;
+    const closer = document.getElementById('popup-closer') as HTMLElement;
+
+
+    const overlay = new Overlay({
+      element: container,
+      autoPan: {
+        animation: {
+          duration: 250,
+        },
+      },
+    });
+    this.map?.addOverlay(overlay);
+
+    closer.onclick = function () {
+      overlay.setPosition(undefined);
+      closer.blur();
+      return false;
+    };
+
+
+
+
+    this.map?.on('singleclick', (evt) => {
+
+
+
+
+      //flights: Flight[]
+
+      this.map?.forEachFeatureAtPixel(
+        evt.pixel,
+        (feature) => {
+
+          const flight = feature.get('flight');
+
+
+         
+
+
+          const coordinate = evt.coordinate;
+
+          if (content) {
+            content.innerHTML = `<h2 class="mb-2 text-lg font-medium text-heading">Flight information</h2>
+<ul class="max-w-md space-y-1 text-body list-inside">
+    <li class="flex items-center">
+         <svg class="w-4 h-4 text-fg-success me-1.5 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+       AIRCRAFT: ${flight.aircraft}
+    </li>
+    <li class="flex items-center">
+         <svg class="w-4 h-4 text-fg-danger-strong me-1.5 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+        EMERGENCY: ${flight.emergency}
+    </li>
+    <li class="flex items-center">
+         <svg class="w-4 h-4 text-body me-1.5 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.5 11.5 11 14l4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+        VELOCITY: ${flight.velocity}
+    </li>
+</ul>`
+          }
+
+
+
+          overlay.setPosition(coordinate);
+
+
+
+
+
+        }
+      );
+
+    });
+
+
+  }
+
   ngOnDestroy(): void {
     this.stopAutoRefresh();
     cancelAnimationFrame(this.animationFrame);
   }
+
+
 }

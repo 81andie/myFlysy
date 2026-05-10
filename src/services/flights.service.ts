@@ -29,7 +29,7 @@ export class FlightsService {
   loadFlights(
     lat: number,
     lon: number,
-    dist: number = 120
+    dist: number = 80
   ) {
 
     this.loading.set(true);
@@ -39,34 +39,34 @@ export class FlightsService {
     this.http.get<{ flights: Flight[] }>(
       `${this.API}?lat=${lat}&lon=${lon}&dist=${dist}`
     )
-    .subscribe({
+      .subscribe({
 
-      next: (res) => {
+        next: (res) => {
 
-        // 🔥 IMPORTANTE:
-        // NO VACIAR SI VIENE VACÍO
-        if (res.flights?.length) {
+          // 🔥 IMPORTANTE:
+          // NO VACIAR SI VIENE VACÍO
+          if (res.flights?.length) {
 
-          this.flights.set(res.flights);
+            this.flights.set(res.flights);
+
+          }
+
+          this.loading.set(false);
+
+        },
+
+        error: (err) => {
+
+          console.error(err);
+
+          // ❌ NO HACER:
+          // this.flights.set([]);
+
+          this.loading.set(false);
 
         }
 
-        this.loading.set(false);
-
-      },
-
-      error: (err) => {
-
-        console.error(err);
-
-        // ❌ NO HACER:
-        // this.flights.set([]);
-
-        this.loading.set(false);
-
-      }
-
-    });
+      });
 
   }
 
@@ -84,5 +84,6 @@ export class FlightsService {
     this.selectedFlight.set(null);
 
   }
+
 
 }
