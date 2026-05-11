@@ -59,7 +59,12 @@ export class MapComponent implements OnInit, OnDestroy {
       const flights = this.flightsService.flights();
       this.updateFlights(flights);
 
+
+
     });
+
+
+
   }
 
   ngOnInit(): void {
@@ -106,6 +111,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.startAutoRefresh();
     this.animate();
     const flights = this.flightsService.flights();
+
     this.researchFlight()
   }
 
@@ -143,6 +149,7 @@ export class MapComponent implements OnInit, OnDestroy {
   updateFlights(flights: Flight[]) {
 
     const now = Date.now();
+    // console.log(flights)
 
     for (const flight of flights) {
 
@@ -266,9 +273,6 @@ export class MapComponent implements OnInit, OnDestroy {
 
   researchFlight() {
 
-
-
-
     const container = document.getElementById('popup') as HTMLElement | undefined;
     const content = document.getElementById('popup-content') as HTMLElement | undefined;
     const closer = document.getElementById('popup-closer') as HTMLElement;
@@ -292,11 +296,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
 
 
-
     this.map?.on('singleclick', (evt) => {
-
-
-
 
       //flights: Flight[]
 
@@ -305,10 +305,6 @@ export class MapComponent implements OnInit, OnDestroy {
         (feature) => {
 
           const flight = feature.get('flight');
-
-
-         
-
 
           const coordinate = evt.coordinate;
 
@@ -334,9 +330,11 @@ export class MapComponent implements OnInit, OnDestroy {
 
           overlay.setPosition(coordinate);
 
+          this.flightsService.selectFlight({
+          ...flight
 
 
-
+          })
 
         }
       );
@@ -345,6 +343,8 @@ export class MapComponent implements OnInit, OnDestroy {
 
 
   }
+
+
 
   ngOnDestroy(): void {
     this.stopAutoRefresh();

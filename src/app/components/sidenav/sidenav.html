@@ -4,7 +4,10 @@
 
 <!-- drawer init and toggle -->
 <div class="text-center flex justify-end mr-2  absolute z-0 top-40 right-2">
-   <button class=" text-mauve-950 bg-cyan-300 box-border border border-transparent hover:bg-fuchsia focus:ring-4 focus:ring-cyan-200 shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none" type="button" data-drawer-target="drawer-example" data-drawer-show="drawer-example" aria-controls="drawer-example">
+   <button class=" text-mauve-950 bg-cyan-300 box-border border border-transparent hover:bg-fuchsia focus:ring-4 focus:ring-cyan-200 shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none" type="button" data-drawer-target="drawer-example" data-drawer-show="drawer-example" aria-controls="drawer-example"
+(click)="toggle()"
+
+   >
    Show
    </button>
 </div>
@@ -13,14 +16,22 @@
 <div id="drawer-example" class="fixed top-0 left-0 h-screen z-40 p-4 overflow-y-auto
             w-full md:w-96
             bg-neutral-primary-soft border-e border-default
-            transform -translate-x-full transition-transform" tabindex="-1" aria-labelledby="drawer-label">
+            transform  transition-transform" tabindex="-1" aria-labelledby="drawer-label"
+[ngClass]="{
+
+    'translate-x-0': opened,
+    '-translate-x-full': !opened
+  }"
+            >
    <div class="border-b border-default pb-4 mb-2 flex items-center justify-center">
     <div class=" w-full text-center justify-center justify-items-center">
        <img src="logo.png" class="h-20">
        <h5 id="drawer-label" class=" text-lg font-medium text-center text-black">
          Flight information
       </h5>
-        <button type="button" data-drawer-hide="drawer-example" aria-controls="drawer-example" class="text-body bg-transparent hover:text-heading hover:bg-neutral-tertiary rounded-base w-9 h-9 absolute  end-2.5 top-2.5 mr-5 flex items-center justify-center">
+        <button type="button" data-drawer-hide="drawer-example" aria-controls="drawer-example" class="text-body bg-transparent hover:text-heading hover:bg-neutral-tertiary rounded-base w-9 h-9 absolute  end-2.5 top-2.5 mr-5 flex items-center justify-center"
+(click)="clear()"
+        >
          <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18 17.94 6M18 18 6.06 6"/></svg>
          <span class="sr-only">Close menu</span>
       </button>
@@ -30,6 +41,8 @@
 <div class="flex  flex-col justify-center mx-auto">
  <img src="aviondespegando.jpg" class="">
 
+
+ @if(flight();as selectedFlight){
  <ul class="max-w-md divide-y divide-default mt-3">
    <li class="pb-3 sm:pb-4">
       <div class="flex items-center space-x-4 rtl:space-x-reverse">
@@ -38,14 +51,14 @@
          </div>
          <div class="flex-1 min-w-0">
             <p class="text-sm font-medium text-heading truncate">
-               ICAO
+             ICAO
             </p>
             <p class="text-sm text-body truncate">
                International Civil Aviation Organization (Icao)
             </p>
          </div>
          <div class="inline-flex items-center text-base font-semibold text-heading">
-            233523
+             {{selectedFlight.icao24}}
          </div>
       </div>
    </li>
@@ -64,7 +77,7 @@
             </p>
          </div>
          <div class="inline-flex items-center text-base font-semibold text-heading">
-            252.67
+             {{selectedFlight.latitude}}
          </div>
       </div>
    </li>
@@ -82,7 +95,7 @@
             </p>
          </div>
          <div class="inline-flex items-center text-base font-semibold text-heading">
-            236.5262
+              {{selectedFlight.longitude}}
          </div>
       </div>
    </li>
@@ -90,7 +103,7 @@
    <li class="py-3 sm:py-4">
       <div class="flex items-center space-x-4 rtl:space-x-reverse">
          <div class="shrink-0">
-            <img class="w-8 h-8 rounded-full" src="velocity1" alt="Neil image">
+            <img class="w-8 h-8 rounded-full" src="velocity.webp" alt="Neil image">
          </div>
          <div class="flex-1 min-w-0">
             <p class="text-sm font-medium text-heading truncate">
@@ -101,7 +114,7 @@
             </p>
          </div>
          <div class="inline-flex items-center text-base font-semibold text-heading">
-            132
+              {{selectedFlight.velocity}}
          </div>
       </div>
    </li>
@@ -118,13 +131,13 @@
             </p>
          </div>
          <div class="inline-flex items-center text-base font-semibold text-heading">
-            TORONTO
+              {{selectedFlight.originCountry}}
          </div>
       </div>
    </li>
 </ul>
 
-
+   }
 </div>
 
 
